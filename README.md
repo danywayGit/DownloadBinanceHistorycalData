@@ -1,5 +1,8 @@
 # DownloadBinanceHistorycalData
 
+## Required powershell module
+    ThreadJob
+
 ## Main information page
 https://www.binance.com/en/landing/data
 https://github.com/binance/binance-public-data

@@ -1,0 +1,5 @@
+# exclude all files in folders name ending with files
+*files/*
+
+# exclude all csv files
+*.csv
