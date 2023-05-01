@@ -11,19 +11,20 @@
    Get-SymbolsList -ContractType 'futures' -FuturesType 'um'
 #>
 function Get-SymbolsList {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='Spot')]
     Param(
-        [Parameter(ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
-        
-        [ValidateSet('spot', 'futures')]
-        [string]
-        $ContractType='spot',
+        [Parameter(Position=0, Mandatory=$false, ParameterSetName='Spot')]
+        [switch]
+        $Spot,
 
-        # Futures type (CM = COIN-M Futures, UM = USD-M Futures)
+        [Parameter(Position=0, Mandatory=$false, ParameterSetName='Futures')]
+        [switch]
+        $Futures,
+
+        [Parameter(Position=1, Mandatory=$true, ParameterSetName='Futures')]
         [ValidateSet('cm', 'um')]
         [string]
-        $FuturesType='um'
+        $FuturesType
     )
 
     $symbolsFolder = "symbols-list"
@@ -31,32 +32,34 @@ function Get-SymbolsList {
         $null = New-Item -ItemType Directory -Path $symbolsFolder
     }
 
-    if ($ContractType -eq 'futures') {
+    if ($Futures) {
         switch ($FuturesType) {
             cm { 
                     $baseUrl = 'https://dapi.binance.com/dapi/v1/exchangeInfo'
-                    $symbolsFolder = Join-Path -Path $symbolsFolder -ChildPath "futur-cm.json"
+                    $symbolsFile = Join-Path -Path $symbolsFolder -ChildPath "futur-cm.txt"
+                    $ContractType = 'futures-cm'
             }
             um { 
                     $baseUrl = 'https://fapi.binance.com/fapi/v1/exchangeInfo'
-                    $symbolsFolder = Join-Path -Path $symbolsFolder -ChildPath "futur-um.json"
+                    $symbolsFile = Join-Path -Path $symbolsFolder -ChildPath "futur-um.txt"
+                    $ContractType = 'futures-um'
             }
             Default {
-                Write-Host "FuturesType must be set to 'cm' or 'um'"
+                throw "FuturesType must be set to 'cm' or 'um'"
             }
         }
     }
     # for spot    
     else {
         $baseUrl = 'https://api.binance.com/api/v3/exchangeInfo'
-        $symbolsFolder = Join-Path -Path $symbolsFolder -ChildPath "spot.json"
+        $symbolsFile = Join-Path -Path $symbolsFolder -ChildPath "spot.txt"
+        $ContractType = 'spot'
     }
 
     try {
-        $WebRequestResult = Invoke-WebRequest -Uri $baseUrl
-        $jsonReponse = $WebRequestResult.Content | ConvertFrom-Json
+        $WebRequestResult = Invoke-WebRequest -Uri $baseUrl -UseBasicParsing
+        $symbolsList = $WebRequestResult.Content | ConvertFrom-Json
     }
-    #catch any webrequest error
     catch {
         $errorMessage = $_.Exception.Message
         $response = $_.Exception.Response
@@ -70,7 +73,8 @@ function Get-SymbolsList {
     }
 
     Write-Host "Getting all symbols for contract type $ContractType"
-    @($jsonReponse).symbols.symbol | Out-File $symbolsFolder 
+    # status = TRADING for spot, and Futurs um, contractStatus = TRADING for futur cm
+    (@($symbolsList).symbols | Where-Object {$_.status -eq 'TRADING' -or $_.contractStatus -eq 'TRADING'}).symbol | Out-File $symbolsFile
     Write-Verbose "Symbols saved in $symbolsFolder"
     
 }
@@ -79,4 +83,4 @@ function Get-SymbolsList {
 
 #Get-SymbolsList -ContractType 'spot'
 #Get-SymbolsList -ContractType 'futures' -FuturesType 'cm'
-Get-SymbolsList -ContractType 'futures' -FuturesType 'um'
+#Get-SymbolsList -ContractType 'futures' -FuturesType 'um'
