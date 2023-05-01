@@ -4,11 +4,11 @@
 .DESCRIPTION
    Get Binance symbols list for spot or futur (CM = COIN-M Futures, UM = USD-M Futures)
 .EXAMPLE
-   Get-SymbolsList -ContractType 'spot'
+   Get-SymbolsList '-Spot'
 .EXAMPLE
-   Get-SymbolsList -ContractType 'futures' -FuturesType 'cm'
+   Get-SymbolsList -Futures' -FuturesType 'cm'
 .EXAMPLE
-   Get-SymbolsList -ContractType 'futures' -FuturesType 'um'
+   Get-SymbolsList -Futures' -FuturesType 'um'
 #>
 function Get-SymbolsList {
     [CmdletBinding(DefaultParameterSetName='Spot')]
@@ -75,12 +75,5 @@ function Get-SymbolsList {
     Write-Host "Getting all symbols for contract type $ContractType"
     # status = TRADING for spot, and Futurs um, contractStatus = TRADING for futur cm
     (@($symbolsList).symbols | Where-Object {$_.status -eq 'TRADING' -or $_.contractStatus -eq 'TRADING'}).symbol | Out-File $symbolsFile
-    Write-Verbose "Symbols saved in $symbolsFolder"
-    
+    Write-Verbose "Symbols saved in $symbolsFolder"   
 }
-
-# Examples
-
-#Get-SymbolsList -ContractType 'spot'
-#Get-SymbolsList -ContractType 'futures' -FuturesType 'cm'
-#Get-SymbolsList -ContractType 'futures' -FuturesType 'um'
