@@ -2,7 +2,7 @@
 . .\GetBinanceHistoricalData.ps1
 
 #get historical data for multiple binance pairs and multiple timeframes
-$timeFrames = '1m', '5m', '15m', '1h', '4h', '1d'
+$timeFrames = '1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d'
 $symbols = 'ETHUSDT', 'LINKUSDT', '1INCHUSDT', 'COMPUSDT', 'AAVEUSDT'
 
 foreach ($symbol in $symbols) {

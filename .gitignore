@@ -1,5 +1,12 @@
 # exclude all files in folders name ending with files
 *files/*
 
+# exclude venv folder
+venv-historicaldata/*
+
+__pycache__/*
+
+.vscode/*
+
 # exclude all csv files
 *.csv

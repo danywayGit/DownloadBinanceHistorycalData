@@ -6,9 +6,9 @@
 .EXAMPLE
    Get-BinanceHistoricalData -ContractType 'spot' -BulkSize 'monthly' -Symbol 'BTCUSDT' -TimeFrame '5m'
 .EXAMPLE
-   Get-BinanceHistoricalData -ContractType 'spot' -BulkSize 'monthly' -Symbol 'BTCUSDT', 'ETHUSDT' -TimeFrame '5m', '15m'
+   Get-BinanceHistoricalData -ContractType 'spot' -BulkSize 'monthly' -Symbol 'BTCUSDT' -TimeFrame '15m'
 .EXAMPLE
-   Get-BinanceHistoricalData -ContractType 'spot' -BulkSize 'monthly' -Symbol 'BTCUSDT', 'ETHUSDT' -TimeFrame '5m', '15m' -StartDate (Get-Date "2017-01-01") -EndDate (Get-Date)
+   Get-BinanceHistoricalData -ContractType 'futures' -BulkSize 'monthly' -Symbol 'ETHUSDT' -TimeFrame '30m' -StartDate (Get-Date "2017-01-01") -EndDate (Get-Date)
 #>
 function Get-BinanceHistoricalData {
     [CmdletBinding()]
